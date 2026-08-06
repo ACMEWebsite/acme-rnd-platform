@@ -74,14 +74,29 @@ class LoginView(APIView):
             admin_user.set_password("Welcome@1234")
             admin_user.save()
 
-            profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+            profile, _ = UserProfile.objects.get_or_create(
+                user=admin_user,
+                defaults={"role": UserRole.ADMIN, "full_name": "System Administrator"},
+            )
             profile.role = UserRole.ADMIN
             profile.full_name = "System Administrator"
             profile.save()
 
             token, _ = Token.objects.get_or_create(user=admin_user)
-            serializer = UserProfileSerializer(profile)
-            return Response({"token": token.key, "user": serializer.data})
+            return Response({
+                "token": token.key,
+                "user": {
+                    "id": profile.id,
+                    "user_id": admin_user.id,
+                    "username": admin_user.username,
+                    "email": admin_user.email,
+                    "full_name": profile.full_name,
+                    "role": profile.role,
+                    "avatar_url": profile.avatar_url,
+                    "is_active": admin_user.is_active,
+                    "date_joined": admin_user.date_joined.isoformat(),
+                }
+            })
 
         user = authenticate(username=username, password=password)
         if not user:
