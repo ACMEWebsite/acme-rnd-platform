@@ -13,10 +13,10 @@ function handleRejectedToken(response: Response, token: string | null) {
 const getApiBase = () => {
   const envUrl = (import.meta as any).env?.VITE_API_URL;
   if (envUrl) return envUrl;
-  if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
+  if (typeof window !== "undefined" && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onrender.com"))) {
     return "https://acme-rnd-backend-api-j0oj.onrender.com";
   }
-  return "";
+  return "https://acme-rnd-backend-api-j0oj.onrender.com";
 };
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
