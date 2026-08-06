@@ -10,10 +10,22 @@ function handleRejectedToken(response: Response, token: string | null) {
   window.dispatchEvent(new Event(AUTH_TOKEN_REJECTED_EVENT));
 }
 
+const getApiBase = () => {
+  const envUrl = (import.meta as any).env?.VITE_API_URL;
+  if (envUrl) return envUrl;
+  if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
+    return "https://acme-rnd-backend.onrender.com";
+  }
+  return "";
+};
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = sessionStorage.getItem("acme_token");
   const isFormData = options.body instanceof FormData;
-  const response = await fetch(path, {
+  const baseUrl = getApiBase();
+  const targetUrl = path.startsWith("http") ? path : `${baseUrl}${path}`;
+
+  const response = await fetch(targetUrl, {
     ...options,
     headers: {
       ...(!isFormData ? {"Content-Type": "application/json"} : {}),
