@@ -9,3 +9,4 @@ PyMuPDF>=1.25,<2
 pytesseract>=0.3.13,<0.4
 Pillow>=11,<13
 google-genai>=1.0,<2
+whitenoise>=6.8,<7
