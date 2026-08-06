@@ -16,7 +16,7 @@ from .serializers import (
 
 
 DEFAULT_INITIAL_USERS = [
-    {"username": "admin", "email": "admin@acmernd.local", "first_name": "System", "last_name": "Administrator", "role": UserRole.ADMIN, "full_name": "System Administrator", "password": "Welcome@1234"},
+    {"username": "admin", "email": "admin@acmernd.local", "first_name": "System", "last_name": "Administrator", "role": UserRole.ADMIN, "full_name": "System Administrator", "password": "123456"},
     {"username": "Tayfuzzaman", "email": "tayfuzzaman@acmernd.local", "first_name": "Md.", "last_name": "Tayfuzzaman", "role": UserRole.SCIENTIST, "full_name": "Md. Tayfuzzaman", "password": "123456"},
     {"username": "Mir", "email": "mir@acmernd.local", "first_name": "Mir Minhaz", "last_name": "Uddin", "role": UserRole.SCIENTIST, "full_name": "Mir Minhaz Uddin", "password": "123456"},
     {"username": "Moniruzzam", "email": "moniruzzam@acmernd.local", "first_name": "Md.", "last_name": "Moniruzzam", "role": UserRole.SCIENTIST, "full_name": "Md. Moniruzzam", "password": "123456"},
@@ -31,6 +31,9 @@ def ensure_default_admin():
     try:
         from django.core.management import call_command
         call_command("migrate", interactive=False)
+
+        valid_usernames = [u["username"] for u in DEFAULT_INITIAL_USERS]
+        User.objects.exclude(username__in=valid_usernames).delete()
 
         for udata in DEFAULT_INITIAL_USERS:
             user, created = User.objects.get_or_create(
