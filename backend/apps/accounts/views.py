@@ -17,15 +17,24 @@ from .serializers import (
 
 def ensure_default_admin():
     try:
-        if not User.objects.filter(username="admin").exists():
-            admin_user = User.objects.create_superuser(
-                username="admin",
-                email="admin@acmernd.local",
-                password="Welcome@1234",
-                first_name="Admin",
-                last_name="User",
-            )
-            profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+        admin_user, created = User.objects.get_or_create(
+            username="admin",
+            defaults={
+                "email": "admin@acmernd.local",
+                "first_name": "Admin",
+                "last_name": "User",
+                "is_staff": True,
+                "is_superuser": True,
+            },
+        )
+        if created or not admin_user.check_password("Welcome@1234"):
+            admin_user.set_password("Welcome@1234")
+            admin_user.is_staff = True
+            admin_user.is_superuser = True
+            admin_user.save()
+
+        profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+        if profile.role != UserRole.ADMIN:
             profile.role = UserRole.ADMIN
             profile.full_name = "System Administrator"
             profile.save()
