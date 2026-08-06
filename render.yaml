@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: acme-rnd-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: acme-rnd-postgres
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "*"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+
+  - type: web
+    name: acme-rnd-frontend
+    env: docker
+    dockerfilePath: ./deployment/caddy/Dockerfile
+    dockerContext: .
+    plan: starter
+    envVars:
+      - key: APP_HOST
+        value: 0.0.0.0
+
+databases:
+  - name: acme-rnd-postgres
+    databaseName: acme_rnd
+    user: acme_app
+    plan: starter

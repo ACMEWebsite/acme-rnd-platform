@@ -1,0 +1,53 @@
+# Fasted-State Human Gastrointestinal Tract Physiological Parameters
+# Sourced from literature:
+# [1] Yu LX, Amidon GL. A compartmental absorption and transit model for estimating oral drug absorption.
+#     Int J Pharm. 1999;186(2):119-125.
+# [2] Yu LX et al. Biopharmaceutics classification system: the scientific basis for biowaivers.
+#     Pharm Res. 2002;19(7):921-925.
+# [3] Oberle RL et al. Variability in gastric emptying and small intestinal transit.
+#     J Pharmacokinet Biopharm. 1990;18(3):211-226.
+# [4] Mudie DM et al. Physiological parameters for oral biopharmaceutics modeling.
+#     Mol Pharm. 2010;7(5):1388-1405.
+
+state: fasted
+
+compartments:
+  stomach:
+    name: "Stomach"
+    volume_ml: 50.0            # Oberle et al. 1990 (Fasted gastric volume ~50 mL)
+    ph: 1.7                    # Yu & Amidon 1999 (Fasted stomach pH ~1.5 - 2.0)
+    transit_time_hr: 0.25      # 15 minutes average gastric emptying time in fasted state (Oberle et al. 1990)
+    surface_area_cm2: 100.0    # Estimated gastric surface area (non-absorptive baseline)
+    is_absorptive: false       # Negligible absorption in stomach
+
+  duodenum:
+    name: "Duodenum"
+    volume_ml: 50.0            # Yu & Amidon 1999 (ACAT model duodenum volume)
+    ph: 6.0                    # Mudie et al. 2010 (Duodenal pH 5.5 - 6.5)
+    transit_time_hr: 0.25      # 15 minutes duodenal transit time (Yu et al. 1996)
+    surface_area_cm2: 900.0    # Yu & Amidon 1999 (Effective absorptive surface area)
+    is_absorptive: true
+
+  jejunum:
+    name: "Jejunum"
+    volume_ml: 150.0           # Yu & Amidon 1999 (ACAT model jejunum volume)
+    ph: 6.5                    # Mudie et al. 2010 (Jejunal pH 6.0 - 7.0)
+    transit_time_hr: 1.5       # 90 minutes jejunal transit time (Yu et al. 1996)
+    surface_area_cm2: 4500.0   # Yu & Amidon 1999 (Primary absorption site surface area)
+    is_absorptive: true
+
+  ileum:
+    name: "Ileum"
+    volume_ml: 100.0           # Yu & Amidon 1999 (ACAT model ileum volume)
+    ph: 7.4                    # Mudie et al. 2010 (Ileal pH 7.0 - 7.5)
+    transit_time_hr: 1.5       # 90 minutes ileal transit time (Yu et al. 1996)
+    surface_area_cm2: 2500.0   # Yu & Amidon 1999 (Distal small intestine surface area)
+    is_absorptive: true
+
+  colon:
+    name: "Colon"
+    volume_ml: 50.0            # Mudie et al. 2010 (Colonic free fluid volume ~10-50 mL)
+    ph: 6.8                    # Mudie et al. 2010 (Colonic pH ~6.5 - 7.0)
+    transit_time_hr: 18.0      # Yu et al. 1996 (Colonic transit time ~12-24 h)
+    surface_area_cm2: 800.0    # Reduced effective surface area in colon
+    is_absorptive: true

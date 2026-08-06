@@ -1,0 +1,15 @@
+.venv/
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+db.sqlite3
+staticfiles/
+*.log
+data/psg-browser/
