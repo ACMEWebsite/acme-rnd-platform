@@ -16,10 +16,14 @@ from .serializers import (
 
 
 DEFAULT_INITIAL_USERS = [
-    {"username": "admin", "email": "admin@acmernd.local", "first_name": "Admin", "last_name": "User", "role": UserRole.ADMIN},
-    {"username": "Minhaz", "email": "minhaz@acmernd.local", "first_name": "Mir Minhaz", "last_name": "Uddin", "role": UserRole.ADMIN},
-    {"username": "Ropak", "email": "ropak@acmernd.local", "first_name": "Ropak", "last_name": "Scientist", "role": UserRole.SCIENTIST},
-    {"username": "Nazia", "email": "nazia@acmernd.local", "first_name": "Nazia", "last_name": "Researcher", "role": UserRole.SCIENTIST},
+    {"username": "admin", "email": "admin@acmernd.local", "first_name": "System", "last_name": "Administrator", "role": UserRole.ADMIN, "full_name": "System Administrator", "password": "Welcome@1234"},
+    {"username": "Tayfuzzaman", "email": "tayfuzzaman@acmernd.local", "first_name": "Md.", "last_name": "Tayfuzzaman", "role": UserRole.SCIENTIST, "full_name": "Md. Tayfuzzaman", "password": "123456"},
+    {"username": "Mir", "email": "mir@acmernd.local", "first_name": "Mir Minhaz", "last_name": "Uddin", "role": UserRole.SCIENTIST, "full_name": "Mir Minhaz Uddin", "password": "123456"},
+    {"username": "Moniruzzam", "email": "moniruzzam@acmernd.local", "first_name": "Md.", "last_name": "Moniruzzam", "role": UserRole.SCIENTIST, "full_name": "Md. Moniruzzam", "password": "123456"},
+    {"username": "Alam", "email": "alam@acmernd.local", "first_name": "Md. rejaul", "last_name": "Alam", "role": UserRole.SCIENTIST, "full_name": "Md. rejaul Alam", "password": "123456"},
+    {"username": "Nazia", "email": "nazia@acmernd.local", "first_name": "Nazia Fairooz", "last_name": "Alam", "role": UserRole.SCIENTIST, "full_name": "Nazia Fairooz Alam", "password": "123456"},
+    {"username": "Amreen", "email": "amreen@acmernd.local", "first_name": "Amreen", "last_name": "Ahmed", "role": UserRole.SCIENTIST, "full_name": "Amreen Ahmed", "password": "123456"},
+    {"username": "Ropak", "email": "ropak@acmernd.local", "first_name": "M. Saidul Islam", "last_name": "Ropak", "role": UserRole.SCIENTIST, "full_name": "M. Saidul Islam Ropak", "password": "123456"},
 ]
 
 
@@ -41,17 +45,15 @@ def ensure_default_admin():
                 },
             )
             user.is_active = True
-            if created or udata["username"] == "admin":
-                user.set_password("Welcome@1234")
-                user.save()
+            user.set_password(udata["password"])
+            user.save()
 
             profile, _ = UserProfile.objects.get_or_create(
                 user=user,
-                defaults={"role": udata["role"], "full_name": f"{udata['first_name']} {udata['last_name']}".strip()},
+                defaults={"role": udata["role"], "full_name": udata["full_name"]},
             )
             profile.role = udata["role"]
-            if not profile.full_name:
-                profile.full_name = f"{udata['first_name']} {udata['last_name']}".strip()
+            profile.full_name = udata["full_name"]
             profile.save()
     except Exception as e:
         print("ensure_default_admin error:", e)
