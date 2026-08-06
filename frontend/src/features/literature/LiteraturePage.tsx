@@ -80,7 +80,9 @@ function formatBytes(bytes: number) {
 }
 
 function errorMessage(error: unknown) {
-  return error instanceof ApiError ? error.message : "The request could not be completed.";
+  if (error instanceof ApiError) return error.message;
+  if (error instanceof Error) return error.message;
+  return typeof error === "string" ? error : "The request could not be completed.";
 }
 
 function InlineText({ text }: { text: string }) {
