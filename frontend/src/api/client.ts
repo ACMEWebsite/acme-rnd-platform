@@ -14,7 +14,7 @@ const getApiBase = () => {
   const envUrl = (import.meta as any).env?.VITE_API_URL;
   if (envUrl) return envUrl;
   if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
-    return "https://acme-rnd-backend.onrender.com";
+    return "https://acme-rnd-backend-api-j0oj.onrender.com";
   }
   return "";
 };

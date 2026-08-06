@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/v1/:path*",
-      "destination": "https://acme-rnd-backend-api.onrender.com/api/v1/:path*"
+      "destination": "https://acme-rnd-backend-api-j0oj.onrender.com/api/v1/:path*"
     },
     {
       "source": "/(.*)",
