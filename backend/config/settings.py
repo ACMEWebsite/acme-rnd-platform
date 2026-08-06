@@ -100,7 +100,8 @@ elif os.getenv("DATABASE_ENGINE", "sqlite").lower() == "postgresql":
         "CONN_MAX_AGE": 60,
     }}
 else:
-    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+    db_path = "/tmp/db.sqlite3" if not DEBUG and os.name != "nt" else BASE_DIR / "db.sqlite3"
+    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": db_path}}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
