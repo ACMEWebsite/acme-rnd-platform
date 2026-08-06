@@ -17,6 +17,9 @@ from .serializers import (
 
 def ensure_default_admin():
     try:
+        from django.core.management import call_command
+        call_command("migrate", interactive=False)
+
         admin_user, created = User.objects.get_or_create(
             username="admin",
             defaults={
@@ -34,7 +37,10 @@ def ensure_default_admin():
         admin_user.set_password("Welcome@1234")
         admin_user.save()
 
-        profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+        profile, _ = UserProfile.objects.get_or_create(
+            user=admin_user,
+            defaults={"role": UserRole.ADMIN, "full_name": "System Administrator"},
+        )
         profile.role = UserRole.ADMIN
         profile.full_name = "System Administrator"
         profile.save()
