@@ -17,7 +17,8 @@ services:
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
         value: "https://*.onrender.com"
 
-  - type: static
+  - type: web
     name: acme-rnd-frontend
+    env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
