@@ -37,7 +37,6 @@ def ensure_default_admin():
         profile, _ = UserProfile.objects.get_or_create(user=admin_user)
         profile.role = UserRole.ADMIN
         profile.full_name = "System Administrator"
-        profile.is_deactivated = False
         profile.save()
     except Exception as e:
         print("ensure_default_admin error:", e)
@@ -78,7 +77,6 @@ class LoginView(APIView):
             profile, _ = UserProfile.objects.get_or_create(user=admin_user)
             profile.role = UserRole.ADMIN
             profile.full_name = "System Administrator"
-            profile.is_deactivated = False
             profile.save()
 
             token, _ = Token.objects.get_or_create(user=admin_user)
