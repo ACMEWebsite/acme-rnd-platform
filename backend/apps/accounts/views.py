@@ -32,9 +32,6 @@ def ensure_default_admin():
         from django.core.management import call_command
         call_command("migrate", interactive=False)
 
-        valid_usernames = [u["username"] for u in DEFAULT_INITIAL_USERS]
-        User.objects.exclude(username__in=valid_usernames).delete()
-
         for udata in DEFAULT_INITIAL_USERS:
             user, created = User.objects.get_or_create(
                 username=udata["username"],
