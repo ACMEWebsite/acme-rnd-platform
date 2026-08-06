@@ -1,0 +1,7 @@
+{
+  "name": "acme-rnd-platform",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build"
+  }
+}
