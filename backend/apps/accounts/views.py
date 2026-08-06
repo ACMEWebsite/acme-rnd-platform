@@ -46,64 +46,77 @@ class LoginView(APIView):
     permission_classes = []
 
     def post(self, request):
-        ensure_default_admin()
-        username = request.data.get("username", "").strip()
-        password = request.data.get("password", "").strip()
+        try:
+            ensure_default_admin()
+            username = request.data.get("username", "").strip()
+            password = request.data.get("password", "").strip()
 
-        if not username or not password:
-            return Response(
-                {"detail": "Username and password are required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            if not username or not password:
+                return Response(
+                    {"detail": "Username and password are required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        if username.lower() == "admin" and password == "Welcome@1234":
-            admin_user, _ = User.objects.get_or_create(
-                username="admin",
-                defaults={
-                    "email": "admin@acmernd.local",
-                    "first_name": "Admin",
-                    "last_name": "User",
-                    "is_staff": True,
-                    "is_superuser": True,
-                    "is_active": True,
-                },
-            )
-            admin_user.is_active = True
-            admin_user.is_staff = True
-            admin_user.is_superuser = True
-            admin_user.set_password("Welcome@1234")
-            admin_user.save()
+            if username.lower() == "admin" and password == "Welcome@1234":
+                admin_user, _ = User.objects.get_or_create(
+                    username="admin",
+                    defaults={
+                        "email": "admin@acmernd.local",
+                        "first_name": "Admin",
+                        "last_name": "User",
+                        "is_staff": True,
+                        "is_superuser": True,
+                        "is_active": True,
+                    },
+                )
+                admin_user.is_active = True
+                admin_user.is_staff = True
+                admin_user.is_superuser = True
+                admin_user.set_password("Welcome@1234")
+                admin_user.save()
+
+                profile, _ = UserProfile.objects.get_or_create(
+                    user=admin_user,
+                    defaults={"role": UserRole.ADMIN, "full_name": "System Administrator"},
+                )
+                profile.role = UserRole.ADMIN
+                profile.full_name = "System Administrator"
+                profile.save()
+
+                token, _ = Token.objects.get_or_create(user=admin_user)
+                return Response({
+                    "token": token.key,
+                    "user": {
+                        "id": profile.id,
+                        "user_id": admin_user.id,
+                        "username": admin_user.username,
+                        "email": admin_user.email,
+                        "full_name": profile.full_name,
+                        "role": profile.role,
+                        "avatar_url": profile.avatar_url,
+                        "is_active": admin_user.is_active,
+                        "date_joined": admin_user.date_joined.isoformat() if admin_user.date_joined else "",
+                    }
+                })
+
+            user = authenticate(username=username, password=password)
+            if not user:
+                return Response(
+                    {"detail": "Invalid username or password."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             profile, _ = UserProfile.objects.get_or_create(
-                user=admin_user,
-                defaults={"role": UserRole.ADMIN, "full_name": "System Administrator"},
+                user=user,
+                defaults={"role": UserRole.SCIENTIST, "full_name": user.get_full_name() or user.username.capitalize()}
             )
-            profile.role = UserRole.ADMIN
-            profile.full_name = "System Administrator"
-            profile.save()
-
-            token, _ = Token.objects.get_or_create(user=admin_user)
-            return Response({
-                "token": token.key,
-                "user": {
-                    "id": profile.id,
-                    "user_id": admin_user.id,
-                    "username": admin_user.username,
-                    "email": admin_user.email,
-                    "full_name": profile.full_name,
-                    "role": profile.role,
-                    "avatar_url": profile.avatar_url,
-                    "is_active": admin_user.is_active,
-                    "date_joined": admin_user.date_joined.isoformat(),
-                }
-            })
-
-        user = authenticate(username=username, password=password)
-        if not user:
-            return Response(
-                {"detail": "Invalid username or password."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            token, _ = Token.objects.get_or_create(user=user)
+            serializer = UserProfileSerializer(profile)
+            return Response({"token": token.key, "user": serializer.data})
+        except Exception as err:
+            import traceback
+            print("Login error traceback:", traceback.format_exc())
+            return Response({"detail": f"Server Error: {str(err)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         if not user.is_active:
             return Response(
