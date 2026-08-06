@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/v1/:path*",
-      "destination": "https://acme-rnd-platform.onrender.com/api/v1/:path*"
+      "destination": "https://8332ea9939f88730-160-30-239-6.serveousercontent.com/api/v1/:path*"
     },
     {
       "source": "/(.*)",
