@@ -12,7 +12,7 @@ export function LoginPage({onAuthenticated, onCancel}: Props) {
   async function submit(event: FormEvent) {
     event.preventDefault(); setLoading(true); setError("");
     try { const result = await api.login(username, password); onAuthenticated(result.token, result.user); }
-    catch { setError("Invalid username or password."); } finally { setLoading(false); }
+    catch (err: any) { setError(err?.message || "Invalid username or password."); } finally { setLoading(false); }
   }
   return <main className="grid min-h-[calc(100vh-9rem)] place-items-center bg-slate-50 p-6">
     <section className="w-full max-w-md">

