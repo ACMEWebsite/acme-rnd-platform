@@ -16,18 +16,21 @@ from .serializers import (
 
 
 def ensure_default_admin():
-    if not User.objects.filter(username="admin").exists():
-        admin_user = User.objects.create_superuser(
-            username="admin",
-            email="admin@acmernd.local",
-            password="Welcome@1234",
-            first_name="Admin",
-            last_name="User",
-        )
-        profile, _ = UserProfile.objects.get_or_create(user=admin_user)
-        profile.role = UserRole.ADMIN
-        profile.full_name = "System Administrator"
-        profile.save()
+    try:
+        if not User.objects.filter(username="admin").exists():
+            admin_user = User.objects.create_superuser(
+                username="admin",
+                email="admin@acmernd.local",
+                password="Welcome@1234",
+                first_name="Admin",
+                last_name="User",
+            )
+            profile, _ = UserProfile.objects.get_or_create(user=admin_user)
+            profile.role = UserRole.ADMIN
+            profile.full_name = "System Administrator"
+            profile.save()
+    except Exception:
+        pass
 
 
 class LoginView(APIView):
